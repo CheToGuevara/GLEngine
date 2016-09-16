@@ -3,7 +3,10 @@ project( GLEngine )
 
 list( APPEND CMAKE_MODULE_PATH
   ${PROJECT_SOURCE_DIR}/CMake
-  ${CMAKE_SOURCE_DIR}/CMake/common )
+  ${CMAKE_SOURCE_DIR}/CMake/common
+  ${CMAKE_SOURCE_DIR}/Externals/include
+  ${CMAKE_SOURCE_DIR}/Externals
+  )
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
@@ -13,7 +16,8 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
   add_definitions(-DDEBUG)
 endif()
 
-include( GitExternal )
+
+
 
 # version
 set( LAST_RELEASE 0.0.0 )
@@ -26,14 +30,9 @@ set( VERSION_ABI 1 )
 set( GLENGINE_DESCRIPTION "GLEngine is a Toolkit for RenderIng and Processing" )
 set( COMMON_PROJECT_DOMAIN gmrv.es )
 
-include(Common)
-
-common_package( Eigen3 REQUIRED SYSTEM )
-common_package( GLUT REQUIRED SYSTEM )
-common_package( GLEW REQUIRED SYSTEM )
-common_package( OpenGL REQUIRED SYSTEM )
-common_package_post( )
+find_package(GLUT REQUIRED)
+find_package(FreeImage REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(GLM REQUIRED)
 
 add_subdirectory( GLEngine )
-
-include( CPackConfig )
