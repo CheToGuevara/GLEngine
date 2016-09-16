@@ -1,8 +1,7 @@
 source_group( \\ FILES CMakeLists.txt )
 
 set(GLENGINE_PUBLIC_HEADERS
- 
-	
+
     loaders/MeshLoader.h
     resources/Mesh.h
     resources/Library.h
