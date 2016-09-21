@@ -13,6 +13,7 @@ set(GLENGINE_PUBLIC_HEADERS
 
 
 set(GLENGINE_SOURCES
+	main.cpp
 	loaders/MeshLoader.cpp
     resources/Mesh.cpp
     resources/Library.cpp
@@ -20,6 +21,9 @@ set(GLENGINE_SOURCES
     scene/Light.cpp
     scene/Switch.cpp
 )
+
+FILE(GLOB_RECURSE SHADERS
+    ${CMAKE_CURRENT_DIR} shaders/*.[a-z]*)
 
 
 
@@ -29,7 +33,7 @@ set(GLENGINE_LINK_LIBRARIES PUBLIC
   ${GLUT_LIBRARIES}
 )
 
-add_library(GLENGINE ${GLENGINE_SOURCES} ${GLENGINE_PUBLIC_HEADERS} }
+add_executable(GLENGINE ${GLENGINE_SOURCES} ${GLENGINE_PUBLIC_HEADERS} )
 
 target_include_directories(GLENGINE
 	${GLENGINE_LINK_LIBRARIES}
@@ -42,4 +46,6 @@ target_link_libraries(GLENGINE
 	${FREEIMAGE_LIBRARIES}
     ${GLEW_LIBRARIES}
 )
+
+FILE(INSTALL shaders/ DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders/)
 
