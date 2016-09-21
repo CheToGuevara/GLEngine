@@ -1,6 +1,9 @@
 #ifndef __IG_AUXILIAR__
 #define __IG_AUXILIAR__
 
+#include "BOX.h"
+#include "PLANE.h"
+
 //Caraga una textura y devuelve un puntero a su ubicacion en mememoria principal
 //también devuelve el tamaño de la textura (w,h)
 //!!Ya implementada

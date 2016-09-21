@@ -1,6 +1,11 @@
-﻿#include "BOX.h"
-#include "auxiliar.h"
-#include "PLANE.h"
+﻿
+#include "config.h"
+
+#include "resources/Library.h"
+
+
+#include "resources/Material.h"
+
 
 #include <windows.h>
 
