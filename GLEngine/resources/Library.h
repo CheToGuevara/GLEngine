@@ -10,8 +10,10 @@
 #define __LIBRARY__
 
 
-#include "config.h"
+#include "../config.h"
 #include "scene/Node.h"
+#include "scene/Light.h"
+#include "scene/Camera.h"
 
 
 class  Library
@@ -34,6 +36,7 @@ class  Library
 			* Method to add Resource
 			*/
 			static const Library* get();
+			static const Library* get(int argc, char** argv);
 
 
 			/**
@@ -44,17 +47,53 @@ class  Library
 
 			/**
 			* Description
+			* Method to add Resource
+			*/
+			void addCamera(Camera * camera);
+
+			/**
+			* Description
+			* Method to add Resource
+			*/
+			void addLight(Light * light);
+
+			/**
+			* Description
 			* Method to get Resource
 			*/
 			Node* getChildren(std::string name);
 
+			/**
+			* Description
+			* Method to get Resource
+			*/
+			void InitOGL();
 
+
+			/**
+			* Description
+			* Method to get Resource
+			*/
+			void Update();
+
+			/**
+			* Description
+			* Method to get Resource
+			*/
+			void MainLoop();
+
+
+			static void renderFunc();
+			static void resizeFunc(int width, int height);
+			static void idleFunc();
+			static void keyboardFunc(unsigned char key, int x, int y);
+			static void mouseFunc(int button, int state, int x, int y);
 
 			///@}
 
 			/** @name Attributes */
 			///@{
-
+			
 
 
 			///@}
@@ -65,7 +104,7 @@ class  Library
 			* Description
 			*
 			*/
-			Library(void);
+			Library(int argc, char** argv);
 			/**
 			* Description
 			*
@@ -77,6 +116,8 @@ class  Library
 		private:
 
 			std::map< std::string, Node* > library;
+			std::map< std::string, Light* > lights;
+			Camera * _camera;
 
 		};
 	

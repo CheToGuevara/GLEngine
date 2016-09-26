@@ -1,15 +1,171 @@
+/**
+* @file    Material.cpp
+* @brief
+* @author  Aaron Sujar <aaronsujar@gmail.com>
+* @date
+* @remarks Copyright (c) GMRV/URJC. All rights reserved.
+*          Do not distribute without further notice.
+*/
 
-#include <windows.h>
+#include "Material.h"
 
-#include <fstream>
 
-//Carga de texturas
-#include <FreeImage.h>
-#define _CRT_SECURE_DEPRECATE_MEMORY
-#include <memory.h>
+
+
+Material::Material(TShader typeofshader, const char *vname, const char *fname)
+{
+	_typeofshader = typeofshader;
+	switch (_typeofshader)
+	{
+		case FORDWARD:
+			initShaderFw(vname, fname);
+			break;
+
+		case POSTPROCCESS:
+			initShaderPP(vname, fname);
+			break;
+
+		default:
+			break;
+	}
+}
+
+Material::~Material()
+{
+
+
+}
+
+
+void Material::initShaderPP(const char *vname, const char *fname)
+{
+	postProccesVShader = loadShader(vname, GL_VERTEX_SHADER);
+	postProccesFShader = loadShader(fname, GL_FRAGMENT_SHADER);
+
+	postProccesProgram = glCreateProgram();
+	glAttachShader(postProccesProgram, postProccesVShader);
+	glAttachShader(postProccesProgram, postProccesFShader);
+
+	glBindAttribLocation(postProccesProgram, 0, "inPos");
+
+	glLinkProgram(postProccesProgram);
+
+	int linked;
+	glGetProgramiv(postProccesProgram, GL_LINK_STATUS, &linked);
+	if (!linked)
+	{
+		//Calculamos una cadena de error
+		GLint logLen;
+		glGetProgramiv(postProccesProgram, GL_INFO_LOG_LENGTH, &logLen);
+
+		char *logString = new char[logLen];
+		glGetProgramInfoLog(postProccesProgram, logLen, NULL, logString);
+		std::cout << "Error: " << logString << std::endl;
+		delete logString;
+
+		glDeleteProgram(postProccesProgram);
+		postProccesProgram = 0;
+		exit(-1);
+	}
+
+	uColorTexPP = glGetUniformLocation(postProccesProgram, "colorTex");
+	inPosPP = glGetAttribLocation(postProccesProgram, "inPos");
+	//uVertexTexPP = glGetUniformLocation(postProccesProgram, "vertexTex");
+
+}
+
+void Material::initShaderFw(const char *vname, const char *fname)
+{
+	vshader = loadShader(vname, GL_VERTEX_SHADER);
+	fshader = loadShader(fname, GL_FRAGMENT_SHADER);
+
+	program = glCreateProgram();
+	glAttachShader(program, vshader);
+	glAttachShader(program, fshader);
+
+	glBindAttribLocation(program, 0, "inPos");
+	glBindAttribLocation(program, 1, "inColor");
+	glBindAttribLocation(program, 2, "inNormal");
+	glBindAttribLocation(program, 3, "inTexCoord");
+
+
+	glLinkProgram(program);
+
+	int linked;
+	glGetProgramiv(program, GL_LINK_STATUS, &linked);
+	if (!linked)
+	{
+		//Calculamos una cadena de error
+		GLint logLen;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLen);
+
+		char *logString = new char[logLen];
+		glGetProgramInfoLog(program, logLen, NULL, logString);
+		std::cout << "Error: " << logString << std::endl;
+		delete logString;
+
+		glDeleteProgram(program);
+		program = 0;
+		exit(-1);
+	}
+
+	uNormalMat = glGetUniformLocation(program, "normal");
+	uModelViewMat = glGetUniformLocation(program, "modelView");
+	uModelViewProjMat = glGetUniformLocation(program, "modelViewProj");
+
+	uColorTex = glGetUniformLocation(program, "colorTex");
+	uEmiTex = glGetUniformLocation(program, "emiTex");
+
+	inPos = glGetAttribLocation(program, "inPos");
+	inColor = glGetAttribLocation(program, "inColor");
+	inNormal = glGetAttribLocation(program, "inNormal");
+	inTexCoord = glGetAttribLocation(program, "inTexCoord");
+}
+
+
 
 //////////////////////////////////////////
 // Funciones auxiliares ya implementadas
+
+
+
+
+
+
+GLuint loadShader(const char *fileName, GLenum type)
+{
+	unsigned int fileLen;
+	char *source = loadStringFromFile(fileName, fileLen);
+
+	//////////////////////////////////////////////
+	//Creación y compilación del Shader
+	GLuint shader;
+	shader = glCreateShader(type);
+	glShaderSource(shader, 1,
+		(const GLchar **)&source, (const GLint *)&fileLen);
+	glCompileShader(shader);
+	delete source;
+
+	//Comprobamos que se compilo bien
+	GLint compiled;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
+	if (!compiled)
+	{
+		//Calculamos una cadena de error
+		GLint logLen;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logLen);
+
+		char *logString = new char[logLen];
+		glGetShaderInfoLog(shader, logLen, NULL, logString);
+		std::cout << "Error: " << logString << std::endl;
+		delete logString;
+
+		glDeleteShader(shader);
+		exit(-1);
+	}
+
+	return shader;
+}
 
 //Funciones para la carga de los shaders
 char *loadStringFromFile(const char *fileName, unsigned int &fileLen)
@@ -40,40 +196,4 @@ char *loadStringFromFile(const char *fileName, unsigned int &fileLen)
 	return source;
 }
 
-unsigned char *loadTexture(const char* fileName, unsigned int &w, unsigned int &h)
-{
-	FreeImage_Initialise(TRUE);
 
-	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(fileName, 0);
-	if (format == FIF_UNKNOWN)
-		format = FreeImage_GetFIFFromFilename(fileName);
-	if ((format == FIF_UNKNOWN) || !FreeImage_FIFSupportsReading(format))
-		return NULL;
-
-	FIBITMAP* img = FreeImage_Load(format, fileName);
-	if (img == NULL)
-		return NULL;
-
-	FIBITMAP* tempImg = img;
-	img = FreeImage_ConvertTo32Bits(img);
-	FreeImage_Unload(tempImg);
-
-	w = FreeImage_GetWidth(img);
-	h = FreeImage_GetHeight(img);
-
-	//BGRA a RGBA
-	unsigned char * map = new unsigned char[4 * w*h];
-	char *buff = (char*)FreeImage_GetBits(img);
-
-	for (unsigned int j = 0; j<w*h; j++){
-		map[j * 4 + 0] = buff[j * 4 + 2];
-		map[j * 4 + 1] = buff[j * 4 + 1];
-		map[j * 4 + 2] = buff[j * 4 + 0];
-		map[j * 4 + 3] = buff[j * 4 + 3];
-	}
-
-	FreeImage_Unload(img);
-	FreeImage_DeInitialise();
-
-	return map;
-}

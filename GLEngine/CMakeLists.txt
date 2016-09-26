@@ -6,6 +6,7 @@ set(GLENGINE_PUBLIC_HEADERS
     resources/Mesh.h
     resources/Library.h
 	resources/Material.h
+	resources/Texture.h
     scene/Camera.h
     scene/Light.h
     scene/Switch.h
@@ -20,6 +21,7 @@ set(GLENGINE_SOURCES
     resources/Mesh.cpp
     resources/Library.cpp
 	resources/Material.cpp
+	resources/Texture.cpp
     scene/Camera.cpp
     scene/Light.cpp
     scene/Switch.cpp
