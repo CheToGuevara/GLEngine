@@ -40,14 +40,20 @@ unsigned int emiTexId;
 
 Library * _Library = NULL;
 
-const Library* Library::get()
+
+ Library* Library::get()
 {
-	if (_Library == NULL)
-		_Library = new Library(1,"GLEngine");
+	 char** name;
+	 name = (char**)malloc(sizeof(char*));
+	 *name = (char*)malloc(sizeof(char)*9);
+	 *name = "GLEngine";
+	 
+	 if (_Library == NULL)
+		 _Library = new Library(1,name);
 
 	return _Library;
 }
-const Library* Library::get(int argc, char** argv)
+ Library* Library::get(int argc, char** argv)
 {
 	if (_Library == NULL)
 		_Library = new Library(argc,argv);
@@ -60,7 +66,7 @@ const Library* Library::get(int argc, char** argv)
 Library::Library(int argc, char** argv)
 {
 	
-	
+	_nodes.clear();
 	std::locale::global(std::locale("spanish"));// acentos ;)
 
 	glutInit(&argc, argv);
@@ -154,8 +160,7 @@ Library::~Library(void)
 
 void Library::addCamera(Camera * camera)
 {
-	if (_camera != NULL)
-		delete _camera;
+
 	_camera = camera;
 }
 
@@ -165,15 +170,18 @@ void Library::addLight(Light * light)
 
 }
 
-void Library::addResource(Node * node)
+void Library::addResource(std::string name,Node * node)
 {
-
+	_nodes[name] = node;
 	
 }
 
 Node *  Library::getChildren(std::string name)
 {
-	
+	if (_nodes.count(name))
+		return _nodes[name];
+
+	return NULL;
 }
 
 void Library::Update()
@@ -190,14 +198,22 @@ void Library::MainLoop()
 
 void Library::renderFunc()
 {
-	//Situar antes de limpiar el FB
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	for (std::map< std::string, Node* >::iterator it = _Library->_nodes.begin();
+		it != _Library->_nodes.end(); it++)
+	{
+		it->second->render(_Library->_camera->getViewMat(), _Library->_camera->getProjMat());
+	}
+
+	glUseProgram(NULL);
 
 
-	/**/
+	glutSwapBuffers();
+
+	/*
 	glUseProgram(program);
 
 	//Texturas
@@ -246,21 +262,21 @@ void Library::renderFunc()
 	//*/
 
 	//Situar después de renderizar los cubos
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	/*glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
 
 
 	glUseProgram(postProccesProgram);
 	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);*/
 
 	/*glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glBlendEquation(GL_FUNC_ADD);*/
 
 
-	if (uColorTexPP != -1)
+	/*if (uColorTexPP != -1)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, colorBuffTexId);
@@ -280,15 +296,12 @@ void Library::renderFunc()
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
-	//glDisable(GL_BLEND);
+	//glDisable(GL_BLEND);*/
 
-	glUseProgram(NULL);
-
-
-	glutSwapBuffers();
+	
 }
 
-void Library::resizeFBO(unsigned int w, unsigned int h)
+/*void Library::resizeFBO(unsigned int w, unsigned int h)
 {
 	glBindTexture(GL_TEXTURE_2D, colorBuffTexId);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0,
@@ -329,22 +342,23 @@ void Library::resizeFBO(unsigned int w, unsigned int h)
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-}
+}*/
 
 
 
 void Library::resizeFunc(int width, int height)
 {
 	glViewport(0, 0, width, height);
-	proj = glm::perspective(glm::radians(60.0f), float(width) / float(height), 1.0f, 50.0f);
-	resizeFBO(width, height);
+	_Library->_camera->setWindowSize(width, height);
+	
+	//resizeFBO(width, height);
 
 	glutPostRedisplay();
 }
 
 void Library::idleFunc()
 {
-	angle = (angle > 3.141592f * 2.0f) ? 0 : angle + 0.02f;
+	
 
 	glutPostRedisplay();
 }

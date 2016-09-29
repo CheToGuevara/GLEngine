@@ -11,9 +11,9 @@
 
 
 #include "../config.h"
-#include "scene/Node.h"
-#include "scene/Light.h"
-#include "scene/Camera.h"
+#include "../scene/Node.h"
+#include "../scene/Light.h"
+#include "../scene/Camera.h"
 
 
 class  Library
@@ -35,15 +35,15 @@ class  Library
 			* Description
 			* Method to add Resource
 			*/
-			static const Library* get();
-			static const Library* get(int argc, char** argv);
+			static Library* get();
+			static Library* get(int argc, char** argv);
 
 
 			/**
 			* Description
 			* Method to add Resource
 			*/
-			void addResource(Node * node);
+			void addResource(std::string name, Node * node);
 
 			/**
 			* Description
@@ -115,7 +115,7 @@ class  Library
 
 		private:
 
-			std::map< std::string, Node* > library;
+			std::map< std::string, Node* > _nodes;
 			std::map< std::string, Light* > lights;
 			Camera * _camera;
 

@@ -10,8 +10,11 @@
 #define __NODE__
 
 
-#include "config.h"
+#include "../config.h"
 #include "Node.h"
+#include "../resources/Texture.h"
+#include "../resources/Material.h"
+#include "../resources/Mesh.h"
 
 
 class  Node
@@ -22,7 +25,16 @@ public:
 	/** @name Constructors and destructors  */
 	///@{
 
-
+	/**
+	* Description
+	*
+	*/
+	Node(void);
+	/**
+	* Description
+	*
+	*/
+	~Node(void);
 
 	///@}
 
@@ -33,8 +45,7 @@ public:
 	* Description
 	* Method to add Resource
 	*/
-	static const Node* get();
-
+	void render(glm::mat4 viewMat, glm::mat4 projMat);
 
 	
 
@@ -51,20 +62,17 @@ public:
 
 protected:
 
-	/**
-	* Description
-	*
-	*/
-	Node(void);
-	/**
-	* Description
-	*
-	*/
-	~Node(void);
+	
 
 
 
 private:
+
+	Mesh * myMesh;
+	Material * myMaterial;
+	std::map< int, Texture* > _textures;
+
+	glm::mat4 model;
 
 
 };

@@ -13,17 +13,31 @@
 
 Camera::Camera(){
 
-	glm::mat4	proj = glm::mat4(1.0f);
-	glm::mat4	view = glm::mat4(1.0f);
+	proj = glm::mat4(1.0f);
+	view = glm::mat4(1.0f);
 
 	proj = glm::perspective(glm::radians(60.0f), 1.0f, 1.0f, 50.0f);
 	view = glm::mat4(1.0f);
-	view[3].z = -25.0f;	
+	view[3].z = -6.0f;	
 }
 
 Camera::~Camera(void)
 {
 
 
+}
+
+glm::mat4 Camera::getProjMat()
+{
+	return proj;
+}
+glm::mat4 Camera::getViewMat()
+{
+	return view;
+}
+
+void Camera::setWindowSize(int width, int height)
+{
+	proj = glm::perspective(glm::radians(60.0f), float(width) / float(height), 1.0f, 50.0f);
 }
 

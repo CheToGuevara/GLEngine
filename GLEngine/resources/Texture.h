@@ -22,7 +22,7 @@ class  Texture
 public:
 
 	typedef enum{
-		DIFFUSE,
+		DIFFUSE=0,
 		NORMAL,
 		EMISIVE,
 		SPECULAR,
@@ -38,6 +38,8 @@ public:
 	~Texture();
 
 	unsigned int useTexture();
+
+	TTexture getType();
 
 
 	///@}
@@ -76,7 +78,7 @@ protected:
 
 
 
-}
+};
 
 
 

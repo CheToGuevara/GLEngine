@@ -9,7 +9,7 @@
 
 #include "Material.h"
 
-
+#include <assert.h>
 
 
 Material::Material(TShader typeofshader, const char *vname, const char *fname)
@@ -122,6 +122,102 @@ void Material::initShaderFw(const char *vname, const char *fname)
 	inTexCoord = glGetAttribLocation(program, "inTexCoord");
 }
 
+void  Material::active()
+{
+	glUseProgram(program);
+
+}
+void  Material::deactive()
+{
+	glUseProgram(NULL);
+
+}
+
+void Material::setMatrices(glm::mat4 modelView, glm::mat4 normalMat, glm::mat4 projMat){
+	
+	glm::mat4 modelViewProj = projMat * modelView;
+	if (uModelViewProjMat != -1)
+		glUniformMatrix4fv(uModelViewProjMat, 1, GL_FALSE, &(modelViewProj[0][0]));
+
+	setMatrices(modelView, normalMat);
+	
+}
+void Material::setMatrices(glm::mat4 modelView, glm::mat4 normalMat){
+	if (uNormalMat != -1)
+		glUniformMatrix4fv(uNormalMat, 1, GL_FALSE, &(normalMat[0][0]));
+	setMatrices(modelView);
+}
+void Material::setMatrices(glm::mat4 modelView)
+{
+	if (uModelViewMat != -1)
+		glUniformMatrix4fv(uModelViewMat, 1, GL_FALSE, &(modelView[0][0]));
+}
+
+
+void Material::activeTexture(Texture * texture)
+{
+	switch (texture->getType())
+	{
+		case Texture::DIFFUSE:
+		
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture->useTexture());
+			glUniform1i(uColorTex, 0);
+			break;
+
+		case Texture::EMISIVE:
+			glActiveTexture(GL_TEXTURE0 + 1);
+			glBindTexture(GL_TEXTURE_2D, texture->useTexture());
+			glUniform1i(uEmiTex, 1);
+		break;
+	}
+
+}
+
+void Material::setAttributes(unsigned int posVBO,
+	unsigned int colorVBO ,
+	unsigned int normalVBO ,
+	unsigned int texCoordVBO )
+{
+
+	if (inPos != -1)
+	{
+	
+
+		glBindBuffer(GL_ARRAY_BUFFER, posVBO);
+		glVertexAttribPointer(inPos, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(inPos);
+	}
+
+	if (inColor != -1)
+	{
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
+	glVertexAttribPointer(inColor, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(inColor);
+}
+
+	if (inNormal != -1)
+	{
+
+
+		glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+		glVertexAttribPointer(inNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(inNormal);
+	}
+
+
+	if (inTexCoord != -1)
+	{
+
+
+		glBindBuffer(GL_ARRAY_BUFFER, texCoordVBO);
+		glVertexAttribPointer(inTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(inTexCoord);
+	}
+
+}
 
 
 //////////////////////////////////////////
@@ -132,10 +228,12 @@ void Material::initShaderFw(const char *vname, const char *fname)
 
 
 
-GLuint loadShader(const char *fileName, GLenum type)
+GLuint Material::loadShader(const char *fileName, GLenum type)
 {
 	unsigned int fileLen;
 	char *source = loadStringFromFile(fileName, fileLen);
+
+	assert(source != NULL);
 
 	//////////////////////////////////////////////
 	//Creación y compilación del Shader
@@ -168,12 +266,12 @@ GLuint loadShader(const char *fileName, GLenum type)
 }
 
 //Funciones para la carga de los shaders
-char *loadStringFromFile(const char *fileName, unsigned int &fileLen)
+char *Material::loadStringFromFile(const char *fileName, unsigned int &fileLen)
 {
 	//Se carga el fichero
 	std::ifstream file;
 	file.open(fileName, std::ios::in);
-	if (!file) return 0;
+	if (!file) return NULL;
 
 	//Se calcula la longitud del fichero
 	file.seekg(0, std::ios::end);

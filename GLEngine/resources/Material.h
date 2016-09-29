@@ -12,6 +12,8 @@
 
 #include "../config.h"
 
+#include "Texture.h"
+
 #include "BOX.h"
 #include "PLANE.h"
 
@@ -42,19 +44,33 @@ public:
 	/** @name Methods */
 	///@{
 
+	void setMatrices(glm::mat4 modelView, glm::mat4 normalMat,glm::mat4 projMat);
+	void setMatrices(glm::mat4 modelView, glm::mat4 normalMat);
+	void setMatrices(glm::mat4 modelView);
+
+	void setAttributes(unsigned int posVBO,
+						unsigned int colorVBO=-1,
+						unsigned int normalVBO=-1,
+						unsigned int texCoordVBO=-1);
+	
+
+
+	void active();
+	void deactive();
+
+
+	void activeTexture(Texture* texture);
+
+
+	
+
 	/**
 	* Description
 	* Method to add Resource
 	*/
 	GLuint loadShader(const char *fileName, GLenum type);
 
-	//Caraga una textura y devuelve un puntero a su ubicacion en mememoria principal
-	//también devuelve el tamaño de la textura (w,h)
-	//!!Ya implementada
-	unsigned char *loadTexture(const char* fileName, unsigned int &w, unsigned int &h);
-
-	//Carga un fichero en una cadena de caracteres
-	char *loadStringFromFile(const char *fileName, unsigned int &fileLen);
+	
 
 protected:
 	/** @name Attributes */
@@ -97,10 +113,15 @@ protected:
 	int inPosPP;
 
 private:
-	char *loadStringFromFile(const char *fileName, unsigned int &fileLen);
-	GLuint loadShader(const char *fileName, GLenum type);
+	//Caraga una textura y devuelve un puntero a su ubicacion en mememoria principal
+	//también devuelve el tamaño de la textura (w,h)
+	//!!Ya implementada
+	unsigned char *loadTexture(const char* fileName, unsigned int &w, unsigned int &h);
 
-}
+	//Carga un fichero en una cadena de caracteres
+	char *loadStringFromFile(const char *fileName, unsigned int &fileLen);
+
+};
 
 
 

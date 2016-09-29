@@ -25,7 +25,7 @@ set(GLENGINE_SOURCES
     scene/Camera.cpp
     scene/Light.cpp
     scene/Switch.cpp
-	scene/Node.h
+	scene/Node.cpp
 )
 
 FILE(GLOB_RECURSE SHADERS

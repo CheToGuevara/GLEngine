@@ -72,6 +72,10 @@ unsigned int Texture::useTexture()
 	return _texId;
 }
 
+Texture::TTexture Texture::getType(){
+	return _typeoftexture;
+}
+
 
 
 unsigned char *Texture::loadTexture(const char* fileName, unsigned int &w, unsigned int &h)

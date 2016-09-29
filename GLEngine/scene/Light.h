@@ -46,4 +46,13 @@ public:
 	*/
 	~Light(void);
 
-}
+
+
+	glm::vec3 Ia;
+	glm::vec3 Id;
+	glm::vec3 Is;
+	glm::vec3 lpos;
+
+};
+
+#endif //__LIGHT__

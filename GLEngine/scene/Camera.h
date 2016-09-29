@@ -41,6 +41,11 @@ public:
 	* Description
 	* Method to add Resource
 	*/
+	glm::mat4 getProjMat();
+	glm::mat4 getViewMat();
+
+
+	void setWindowSize(int width, int height);
 
 
 	///@}
@@ -52,6 +57,6 @@ protected:
 	glm::mat4	proj;
 	glm::mat4	view;
 
-}
+};
 
 #endif //__Camera__

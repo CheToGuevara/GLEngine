@@ -1,4 +1,101 @@
+/**
+* @file    Mesh.cpp
+* @brief
+* @author  Aaron Sujar <aaronsujar@gmail.com>
+* @date
+* @remarks Copyright (c) GMRV/URJC. All rights reserved.
+*          Do not distribute without further notice.
+*/
 
+#include "Mesh.h"
+
+#include "BOX.h"
+
+
+Mesh::Mesh()
+{
+
+	posVBO = -1;
+	colorVBO = -1;
+	normalVBO = -1;
+	texCoordVBO = -1;
+	triangleIndexVBO = -1;
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	//if (inPos != -1)
+	{
+		glGenBuffers(1, &posVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, posVBO);
+		glBufferData(GL_ARRAY_BUFFER, cubeNVertex*sizeof(float)* 3,
+			cubeVertexPos, GL_STATIC_DRAW);
+		
+		/*glBindBuffer(GL_ARRAY_BUFFER, posVBO);
+		glVertexAttribPointer(inPos, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(inPos);*/
+	}
+
+	//if (inColor != -1)
+	{
+		glGenBuffers(1, &colorVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
+		glBufferData(GL_ARRAY_BUFFER, cubeNVertex*sizeof(float)* 3,
+			cubeVertexColor, GL_STATIC_DRAW);
+		
+		/*glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
+		glVertexAttribPointer(inColor, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(inColor);*/
+	}
+
+	//if (inNormal != -1)
+	{
+		glGenBuffers(1, &normalVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+		glBufferData(GL_ARRAY_BUFFER, cubeNVertex*sizeof(float)* 3,
+			cubeVertexNormal, GL_STATIC_DRAW);
+		
+		/*glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+		glVertexAttribPointer(inNormal, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(inNormal);*/
+	}
+
+
+	//if (inTexCoord != -1)
+	{
+		glGenBuffers(1, &texCoordVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, texCoordVBO);
+		glBufferData(GL_ARRAY_BUFFER, cubeNVertex*sizeof(float)* 2,
+			cubeVertexTexCoord, GL_STATIC_DRAW);
+
+		/*glBindBuffer(GL_ARRAY_BUFFER, texCoordVBO);
+		glVertexAttribPointer(inTexCoord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(inTexCoord);*/
+	}
+
+	glGenBuffers(1, &triangleIndexVBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, triangleIndexVBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+		cubeNTriangleIndex*sizeof(unsigned int)* 3, cubeTriangleIndex,
+		GL_STATIC_DRAW);
+
+}
+
+Mesh::~Mesh()
+{
+
+
+}
+
+void Mesh::render()
+{
+	
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, triangleIndexVBO * 3,
+		GL_UNSIGNED_INT, (void*)0);
+}
+
+/*
 void initPlane()
 {
 	glGenVertexArrays(1, &planeVAO);
@@ -102,3 +199,4 @@ void renderCube()
 	glDrawElements(GL_TRIANGLES, cubeNTriangleIndex * 3,
 		GL_UNSIGNED_INT, (void*)0);
 }
+*/
