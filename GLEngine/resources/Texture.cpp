@@ -50,9 +50,9 @@ unsigned int Texture::loadTex(const char *fileName)
 		exit(-1);
 	}
 
-	unsigned int texId;
-	glGenTextures(1, &texId);
-	glBindTexture(GL_TEXTURE_2D, texId);
+	
+	glGenTextures(1, &_texId);
+	glBindTexture(GL_TEXTURE_2D, _texId);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA,
 		GL_UNSIGNED_BYTE, (GLvoid*)map);
 	delete[] map;
@@ -64,7 +64,7 @@ unsigned int Texture::loadTex(const char *fileName)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 
-	return texId;
+	return _texId;
 }
 
 unsigned int Texture::useTexture()

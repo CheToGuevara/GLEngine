@@ -18,7 +18,7 @@ Camera::Camera(){
 
 	proj = glm::perspective(glm::radians(60.0f), 1.0f, 1.0f, 50.0f);
 	view = glm::mat4(1.0f);
-	view[3].z = -6.0f;	
+	view[3].z = -7.0f;	
 }
 
 Camera::~Camera(void)

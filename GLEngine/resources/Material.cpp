@@ -166,7 +166,7 @@ void Material::activeTexture(Texture * texture)
 			break;
 
 		case Texture::EMISIVE:
-			glActiveTexture(GL_TEXTURE0 + 1);
+			glActiveTexture(GL_TEXTURE0+1);
 			glBindTexture(GL_TEXTURE_2D, texture->useTexture());
 			glUniform1i(uEmiTex, 1);
 		break;

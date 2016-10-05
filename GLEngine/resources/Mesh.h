@@ -11,6 +11,8 @@
 
 
 #include "../config.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
 
 
 
@@ -27,6 +29,8 @@ public:
 	*
 	*/
 	Mesh(void);
+
+	Mesh(const char *fileName);
 	/**
 	* Description
 	*
@@ -65,7 +69,7 @@ public:
 protected:
 
 	
-
+	void convertMesh(aiMesh* _aiMesh);
 
 
 private:
@@ -80,7 +84,14 @@ private:
 	unsigned int texCoordVBO;
 	unsigned int triangleIndexVBO;
 
-
+	//Vectores
+	std::vector<unsigned int> _TriangleIndex;
+	std::vector<glm::vec3> _VertexPos;
+	std::vector<glm::vec3> _VertexNormal;
+	std::vector<glm::vec3> _VertexColor;
+	std::vector<glm::vec2> _VertexTexCoord;
+	std::vector<glm::vec3> _VertexTangent;
+	unsigned int _numTriangleIndex;
 };
 
 #endif ///__MESH__
